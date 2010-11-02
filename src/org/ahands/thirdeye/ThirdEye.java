@@ -14,7 +14,7 @@ public class ThirdEye {
 	public static void main(String[] args) throws AWTException {
 		final Cam cam = new Cam("/dev/video0");
 		final Dot dot = new Dot();
-		final JFrame frame = new JFrame("Image");
+		final JFrame frame = new JFrame("ThirdEye");
 		BufferedImage bImg;
 		bImg = cam.getImg();
 		dot.setCamImg(bImg);
@@ -29,11 +29,12 @@ public class ThirdEye {
 		Point dotLocation = new Point(0, 0);
 
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
-		// final Rectangle container = (dot.getSimpleContainer());
 		final Ellipse2D container = (dot.getRoundContainer());
 		final Point origin = dot.getAverage();
 		final int threshold = 5;
-		final SmoothRob smoothRob = new SmoothRob(origin, threshold);
+		final SmoothRob smoothRob = new SmoothRob(origin, threshold + (threshold / 2));
+		final Color dotColor = new Color(0xdd00ff00, true);
+		final Color containerColor = new Color(0xaa0000ff, true);
 		while (true) {
 
 			// bImg = cam.getFlippedImg();
@@ -45,15 +46,14 @@ public class ThirdEye {
 			g2d.drawImage(bImg, null, 0, 0);
 			g2d.drawImage(dot.getDotImg(), null, W, 0);
 
-			// Circle
-			final Shape circle = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 8, 8);
-			g2d.setPaint(Color.blue);
-			g2d.draw(circle);
-			g2d.fill(circle);
-
 			// Box
-			g2d.setPaint(Color.green);
-			g2d.draw(container);
+			g2d.setPaint(containerColor);
+			g2d.fill(container);
+
+			// Circle
+			final Shape circle = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 10, 10);
+			g2d.setPaint(dotColor);
+			g2d.fill(circle);
 
 			if (dotLocation != origin) {
 				smoothRob.moveMouse(dotLocation);

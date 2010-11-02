@@ -42,14 +42,16 @@ public class SmoothRob {
 	public void smoothMouseMove(Point dotLocation) {
 		Point current = MouseInfo.getPointerInfo().getLocation();
 
-		if (dotLocation.x != (origin.x + threshold)) {
+		if (Math.abs(dotLocation.x - origin.x) > threshold) {
 			int distance = dotLocation.x - origin.x;
+			distance = distance / threshold;
 			this.sMoveX(current, distance);
 		}
 
 		current = MouseInfo.getPointerInfo().getLocation();
-		if (dotLocation.y != (origin.y + threshold)) {
+		if (Math.abs(dotLocation.y - origin.y) > threshold) {
 			int distance = dotLocation.y - origin.y;
+			distance = distance / threshold;
 			this.sMoveY(current, distance);
 		}
 	}
