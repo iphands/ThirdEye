@@ -129,7 +129,7 @@ public class Dot {
 			final int len = foundList.size();
 			return new Point((x / len), (y / len));
 		} catch (ArithmeticException e) {
-			return new Point(0, 0);
+			return null;
 		}
 	}
 }

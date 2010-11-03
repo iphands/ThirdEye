@@ -7,9 +7,17 @@ import java.awt.Robot;
 
 public class SmoothRob {
 
-	final Robot rob;
-	final Point origin;
-	final int threshold;
+	final private Robot rob;
+	private Point origin;
+	private int threshold;
+
+	public void setOrigin(Point origin) {
+		this.origin = origin;
+	}
+
+	public void setThreshold(int threshold) {
+		this.threshold = threshold;
+	}
 
 	public SmoothRob(final Point origin, final int threshold) throws AWTException {
 		this.rob = new Robot();
