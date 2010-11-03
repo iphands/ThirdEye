@@ -7,6 +7,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class Dot {
@@ -53,24 +54,27 @@ public class Dot {
 	}
 
 	public void findDot() {
+		final long start = Calendar.getInstance().getTimeInMillis();
 		if (camImg == null) {
 			return;
 		}
 
 		foundList.clear();
-		this.dotImg = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
-		final long start = Calendar.getInstance().getTimeInMillis();
+
+		final int h = camImg.getHeight();
+		final int w = camImg.getWidth();
+
+		this.dotImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
 		Color rgb;
-		for (Color color : dotColor) {
-			int known_r = color.getRed();
-			int known_g = color.getGreen();
-			int known_b = color.getBlue();
+		for (final Color color : dotColor) {
+			final int known_r = color.getRed();
+			final int known_g = color.getGreen();
+			final int known_b = color.getBlue();
 
-			for (int h = camImg.getHeight(), y = 0; y < h; y = y + 1) {
-				for (int w = camImg.getHeight(), x = 0; x < w; x = x + 1) {
+			for (int y = 0; y < h; y = y + 2) {
+				for (int x = 0; x < w; x = x + 2) {
 					rgb = new Color(camImg.getRGB(x, y));
-					// dotImg.setRGB(x, y, rgb.getRGB());
 					if (Math.abs(known_g - rgb.getGreen()) <= threshold) {
 						if (Math.abs(known_r - rgb.getRed()) <= threshold) {
 							if (Math.abs(known_b - rgb.getBlue()) <= threshold) {
@@ -118,10 +122,26 @@ public class Dot {
 		return new Rectangle(min_x, min_y, (max_x - min_x), (max_y - min_y));
 	}
 
+	public Point getMedian() {
+
+		final List<Double> xList = new ArrayList<Double>();
+		final List<Double> yList = new ArrayList<Double>();
+
+		for (final Point point : foundList) {
+			xList.add(point.getX());
+			yList.add(point.getY());
+		}
+
+		Collections.sort(xList);
+		Collections.sort(yList);
+
+		return new Point(((xList.get(xList.size() / 2)).intValue()), ((yList.get(yList.size() / 2)).intValue()));
+	}
+
 	public Point getAverage() {
 		try {
 			int x = 0, y = 0;
-			for (Point point : foundList) {
+			for (final Point point : foundList) {
 				x = x + point.x;
 				y = y + point.y;
 			}
