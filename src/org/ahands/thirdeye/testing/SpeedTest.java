@@ -27,7 +27,21 @@ public class SpeedTest {
 			e.printStackTrace();
 		}
 
+		long start;
 		findDot();
+
+		start = Calendar.getInstance().getTimeInMillis();
+		for (int j = 0; j < 1000; j++) {
+			getMedian();
+		}
+		System.out.println("med: " + (Calendar.getInstance().getTimeInMillis() - start) + ", ");
+
+		start = Calendar.getInstance().getTimeInMillis();
+		for (int j = 0; j < 1000; j++) {
+			getAverage();
+		}
+		System.out.println("avg: " + (Calendar.getInstance().getTimeInMillis() - start) + ", ");
+
 		try {
 			ImageIO.write(dotImg, "png", new File("/tmp/dots/findDot.png"));
 		} catch (IOException e) {
@@ -52,7 +66,6 @@ public class SpeedTest {
 		long fd3 = 0;
 		long fd4 = 0;
 
-		long start;
 		System.out.printf("Loop, findDot2(), findDot(), findDot3(), findDot4()\n");
 
 		// for (int j = 0; j < 255; j++) {
