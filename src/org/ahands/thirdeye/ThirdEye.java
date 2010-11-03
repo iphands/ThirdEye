@@ -1,6 +1,7 @@
 package org.ahands.thirdeye;
 
 import java.awt.AWTException;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -11,19 +12,21 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+import org.ahands.thirdeye.gui.LiveSettings;
+
 public class ThirdEye {
 	static Ellipse2D container;
 	static Point origin;
+	public static String camPath = "/dev/video0";
 
 	public static void main(String[] args) throws AWTException, InterruptedException {
-		final String camPath = "/dev/video0";
-
+		final JFrame frame = new JFrame("ThirdEye");
+		frame.setSize(400, 300);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		LiveSettings settings = new LiveSettings();
+		frame.add(settings, BorderLayout.SOUTH);
 		if (!new File(camPath).exists()) {
-
-			final JFrame devWaitFrame = new JFrame("No devices found...");
-			devWaitFrame.setVisible(true);
-			devWaitFrame.setBounds(20, 20, 300, 150);
-			devWaitFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			while (true) {
 				System.out.printf("Waiting for device %s...\n", camPath);
 				Thread.sleep(1500);
@@ -35,17 +38,19 @@ public class ThirdEye {
 
 		final Cam cam = new Cam(camPath);
 		final Dot dot = new Dot();
-		final JFrame frame = new JFrame("ThirdEye");
+
 		BufferedImage bImg;
-		bImg = cam.getImg();
+		try {
+			bImg = cam.getImg();
+		} catch (Exception e) {
+			bImg = null;
+		}
 		dot.setCamImg(bImg);
 		dot.findDot();
 
 		final int W = bImg.getWidth();
 		final int H = bImg.getHeight();
-		frame.setBounds(0, 0, W * 2, H);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(W * 2, H + settings.getHeight());
 
 		Point dotLocation = new Point(0, 0);
 		initImages(dot);
@@ -56,8 +61,19 @@ public class ThirdEye {
 		final Color containerColor = new Color(0xaa0000ff, true);
 		while (true) {
 
-			// bImg = cam.getFlippedImg();
-			bImg = cam.getImg();
+			if (!cam.getCamDevice().equals(camPath)) {
+				cam.setCamDevice(camPath);
+			}
+
+			try {
+				// bImg = cam.getFlippedImg();
+				bImg = cam.getImg();
+			} catch (Exception e) {
+				e.printStackTrace();
+				cam.setCamDevice(camPath);
+				continue;
+			}
+
 			dot.setCamImg(bImg);
 			dot.findDot();
 			dotLocation = dot.getAverage();

@@ -4,7 +4,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
@@ -16,18 +16,19 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 
 public class Cam {
 
-	File camDevice;
+	private String camDevString;
 	FrameGrabber fg;
 	int width = 640;
 	int height = 480;
 	ByteBuffer bb;
 	byte[] b;
+	private VideoDevice vd;
 
 	public Cam(String dev) {
-		this.camDevice = new File(dev);
+		this.camDevString = dev;
 		int w = 640, h = 480, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
 		try {
-			VideoDevice vd = new VideoDevice(dev);
+			this.vd = new VideoDevice(dev);
 			this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);
 			this.fg.startCapture();
 		} catch (V4L4JException e) {
@@ -35,7 +36,25 @@ public class Cam {
 		}
 	}
 
-	public BufferedImage getFlippedImg() {
+	public String getCamDevice() {
+		return this.camDevString;
+	}
+
+	public void setCamDevice(String dev) {
+		this.camDevString = dev;
+		this.fg.stopCapture();
+
+		int w = 640, h = 480, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
+		try {
+			this.vd = new VideoDevice(dev);
+			this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);
+			this.fg.startCapture();
+		} catch (V4L4JException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public BufferedImage getFlippedImg() throws V4L4JException, IOException {
 		BufferedImage bufferedImage = this.getImg();
 		AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
 		tx.translate(-bufferedImage.getWidth(null), 0);
@@ -45,15 +64,10 @@ public class Cam {
 		return bufferedImage;
 	}
 
-	public BufferedImage getImg() {
-		try {
-			bb = fg.getFrame();
-			b = new byte[bb.limit()];
-			bb.get(b);
-			return ImageIO.read(new ByteArrayInputStream(b));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public BufferedImage getImg() throws V4L4JException, IOException {
+		bb = fg.getFrame();
+		b = new byte[bb.limit()];
+		bb.get(b);
+		return ImageIO.read(new ByteArrayInputStream(b));
 	}
 }
