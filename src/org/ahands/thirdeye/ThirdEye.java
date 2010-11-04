@@ -61,6 +61,7 @@ public class ThirdEye {
 		Point dotLocation = new Point(0, 0);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
 		final SmoothRob smoothRob = new SmoothRob(origin, threshold + (threshold / 2));
+		final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
 		smoothRob.setFlipped(flipped);
 
 		final Color avgColor = new Color(0xaa00ff00, true);
@@ -116,8 +117,10 @@ public class ThirdEye {
 			g2d.fill(circleMedian);
 
 			if (dotLocation != origin) {
-				smoothRob.moveMouse(dotLocation);
-				smoothRob.smoothMouseMove(dotLocation);
+				// smoothRob.moveMouse(dotLocation);
+				// smoothRob.smoothMouseMove(dotLocation);
+				rLaunch.move(dotLocation);
+
 			}
 		}
 	}
