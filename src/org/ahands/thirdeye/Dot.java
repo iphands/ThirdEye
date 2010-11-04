@@ -6,7 +6,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,11 +17,11 @@ public class Dot {
 	// 0x655146 pink 463930
 	// highlight 595a3b 646c43 7c8e54
 	// private Color[] dotColor = { new Color(0x595a3b), new Color(0x646c43), new Color(0x7c8e54) };
-	private Color[] dotColor = { new Color(0xfc7c55), new Color(0xa3283a) };
+	private Color[] dotColor = { new Color(0xfc7c55), new Color(0x243d30) };
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
-	private final int threshold = 44;
+	private final int threshold = 10;
 
 	public Color[] getDotColor() {
 		return dotColor;

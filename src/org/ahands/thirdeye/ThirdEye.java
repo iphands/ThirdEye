@@ -17,7 +17,7 @@ import org.ahands.thirdeye.gui.LiveSettings;
 public class ThirdEye {
 	static Ellipse2D container;
 	static Point origin;
-	public static String camPath = "/dev/video1";
+	public static String camPath = "/dev/video0";
 	public static final int threshold = 7;
 
 	public static void main(String[] args) throws AWTException, InterruptedException {
@@ -117,10 +117,10 @@ public class ThirdEye {
 			g2d.fill(circleMedian);
 
 			if (dotLocation != origin) {
-				// smoothRob.moveMouse(dotLocation);
+				smoothRob.moveMouse(dotLocation);
 				// smoothRob.smoothMouseMove(dotLocation);
 			}
-			rLaunch.move(dotLocation);
+			//rLaunch.move(dotLocation);
 		}
 	}
 
