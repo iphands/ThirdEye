@@ -119,9 +119,8 @@ public class ThirdEye {
 			if (dotLocation != origin) {
 				// smoothRob.moveMouse(dotLocation);
 				// smoothRob.smoothMouseMove(dotLocation);
-				rLaunch.move(dotLocation);
-
 			}
+			rLaunch.move(dotLocation);
 		}
 	}
 

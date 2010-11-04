@@ -22,7 +22,7 @@ public class Dot {
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
-	private final int threshold = 52;
+	private final int threshold = 44;
 
 	public Color[] getDotColor() {
 		return dotColor;
@@ -54,7 +54,7 @@ public class Dot {
 	}
 
 	public void findDot() {
-		final long start = Calendar.getInstance().getTimeInMillis();
+		// final long start = Calendar.getInstance().getTimeInMillis();
 		if (camImg == null) {
 			return;
 		}
@@ -86,7 +86,7 @@ public class Dot {
 				}
 			}
 		}
-		System.out.println(Calendar.getInstance().getTimeInMillis() - start);
+		// System.out.println(Calendar.getInstance().getTimeInMillis() - start);
 	}
 
 	public Rectangle getSimpleContainer() {
