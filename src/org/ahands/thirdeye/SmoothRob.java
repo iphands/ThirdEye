@@ -10,6 +10,7 @@ public class SmoothRob {
 	final private Robot rob;
 	private Point origin;
 	private int threshold;
+	private boolean flipped;
 
 	public void setOrigin(Point origin) {
 		this.origin = origin;
@@ -27,11 +28,21 @@ public class SmoothRob {
 
 	private void sMoveX(Point current, int distance) {
 		for (int i = 0, j = Math.abs(distance); i < j; i++) {
-			if (distance < 0) {
-				current.x++;
+
+			if (flipped) {
+				if (distance < 0) {
+					current.x--;
+				} else {
+					current.x++;
+				}
 			} else {
-				current.x--;
+				if (distance < 0) {
+					current.x++;
+				} else {
+					current.x--;
+				}
 			}
+
 			rob.mouseMove(current.x, current.y);
 		}
 	}
@@ -67,12 +78,23 @@ public class SmoothRob {
 	public void moveMouse(Point dotLocation) {
 		Point current = MouseInfo.getPointerInfo().getLocation();
 
-		if (dotLocation.x > (origin.x + threshold)) {
-			int rate = dotLocation.x - origin.x;
-			rob.mouseMove(current.x - (rate), current.y);
-		} else if (dotLocation.x < (origin.x - threshold)) {
-			int rate = origin.x - dotLocation.x;
-			rob.mouseMove(current.x + (rate), current.y);
+		if (flipped) {
+			if (dotLocation.x > (origin.x + threshold)) {
+				int rate = dotLocation.x - origin.x;
+				rob.mouseMove(current.x + (rate), current.y);
+			} else if (dotLocation.x < (origin.x - threshold)) {
+				int rate = origin.x - dotLocation.x;
+				rob.mouseMove(current.x - (rate), current.y);
+			}
+		} else {
+			if (dotLocation.x > (origin.x + threshold)) {
+				int rate = dotLocation.x - origin.x;
+				rob.mouseMove(current.x - (rate), current.y);
+			} else if (dotLocation.x < (origin.x - threshold)) {
+				int rate = origin.x - dotLocation.x;
+				rob.mouseMove(current.x + (rate), current.y);
+			}
+
 		}
 
 		current = MouseInfo.getPointerInfo().getLocation();
@@ -83,5 +105,13 @@ public class SmoothRob {
 			int rate = origin.y - dotLocation.y;
 			rob.mouseMove(current.x, (current.y - rate));
 		}
+	}
+
+	public void setFlipped(boolean flipped) {
+		this.flipped = flipped;
+	}
+
+	public boolean isFlipped() {
+		return flipped;
 	}
 }

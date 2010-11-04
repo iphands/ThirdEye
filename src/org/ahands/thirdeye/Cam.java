@@ -18,15 +18,15 @@ public class Cam {
 
 	private String camDevString;
 	FrameGrabber fg;
-	int width = 640;
-	int height = 480;
+	int width = 320;
+	int height = 240;
 	ByteBuffer bb;
 	byte[] b;
 	private VideoDevice vd;
 
 	public Cam(String dev) {
 		this.camDevString = dev;
-		int w = 640, h = 480, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
+		int w = width, h = height, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
 		try {
 			this.vd = new VideoDevice(dev);
 			this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);
@@ -44,7 +44,7 @@ public class Cam {
 		this.camDevString = dev;
 		this.fg.stopCapture();
 
-		int w = 640, h = 480, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
+		int w = width, h = height, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
 		try {
 			this.vd = new VideoDevice(dev);
 			this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);

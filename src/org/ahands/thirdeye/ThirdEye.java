@@ -17,9 +17,11 @@ import org.ahands.thirdeye.gui.LiveSettings;
 public class ThirdEye {
 	static Ellipse2D container;
 	static Point origin;
-	public static String camPath = "/dev/video0";
+	public static String camPath = "/dev/video1";
+	public static final int threshold = 7;
 
 	public static void main(String[] args) throws AWTException, InterruptedException {
+		boolean flipped = true;
 		final JFrame frame = new JFrame("ThirdEye");
 		frame.setSize(400, 300);
 		frame.setVisible(true);
@@ -41,7 +43,11 @@ public class ThirdEye {
 
 		BufferedImage bImg;
 		try {
-			bImg = cam.getImg();
+			if (flipped) {
+				bImg = cam.getFlippedImg();
+			} else {
+				bImg = cam.getImg();
+			}
 		} catch (Exception e) {
 			bImg = null;
 		}
@@ -53,12 +59,13 @@ public class ThirdEye {
 		frame.setSize(W * 2, H + settings.getHeight());
 
 		Point dotLocation = new Point(0, 0);
-		initImages(dot);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
-		final int threshold = 5;
 		final SmoothRob smoothRob = new SmoothRob(origin, threshold + (threshold / 2));
-		final Color dotColor = new Color(0xdd00ff00, true);
-		final Color containerColor = new Color(0xaa0000ff, true);
+		smoothRob.setFlipped(flipped);
+
+		final Color avgColor = new Color(0xaa00ff00, true);
+		final Color containerColor = new Color(0x660000ff, true);
+
 		while (true) {
 
 			if (!cam.getCamDevice().equals(camPath)) {
@@ -66,8 +73,11 @@ public class ThirdEye {
 			}
 
 			try {
-				// bImg = cam.getFlippedImg();
-				bImg = cam.getImg();
+				if (flipped) {
+					bImg = cam.getFlippedImg();
+				} else {
+					bImg = cam.getImg();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				cam.setCamDevice(camPath);
@@ -76,17 +86,20 @@ public class ThirdEye {
 
 			dot.setCamImg(bImg);
 			dot.findDot();
-			dotLocation = dot.getAverage();
-			if ((dotLocation == null) || (container == null) || (origin == null)) {
-				initImages(dot);
-				smoothRob.setOrigin(origin);
-				g2d.drawImage(bImg, null, 0, 0);
 
-				try {
-					System.err.printf("cont %f,%f\n", container.getCenterX(), container.getY());
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
+			final Point avg = dot.getAverage();
+			final Point med = dot.getMedian();
+			try {
+				dotLocation = new Point((avg.x + med.x) / 2, (avg.y + med.y) / 2);
+			} catch (NullPointerException e) {
+				dotLocation = null;
+			}
+
+			if ((dotLocation == null) || (container == null) || (origin == null)) {
+				initImages(dotLocation);
+				smoothRob.setOrigin(origin);
+				smoothRob.setFlipped(flipped);
+				g2d.drawImage(bImg, null, 0, 0);
 				continue;
 			}
 
@@ -98,25 +111,24 @@ public class ThirdEye {
 			g2d.fill(container);
 
 			// Circle
-			final Shape circle = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 10, 10);
-			g2d.setPaint(dotColor);
-			g2d.fill(circle);
+			final Shape circleMedian = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 10, 10);
+			g2d.setPaint(avgColor);
+			g2d.fill(circleMedian);
 
 			if (dotLocation != origin) {
 				smoothRob.moveMouse(dotLocation);
-				// smoothRob.smoothMouseMove(dotLocation);
+				smoothRob.smoothMouseMove(dotLocation);
 			}
 		}
 	}
 
-	private static void initImages(Dot dot) {
+	private static void initImages(Point dotLocation) {
 		try {
 			container = null;
 			origin = null;
-			container = (dot.getRoundContainer());
-			origin = dot.getAverage();
+			container = new Ellipse2D.Float(dotLocation.x - 10, dotLocation.y - 10, threshold * 4, threshold * 4);
+			origin = dotLocation;
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
 	}
 }

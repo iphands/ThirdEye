@@ -18,11 +18,11 @@ public class Dot {
 	// 0x655146 pink 463930
 	// highlight 595a3b 646c43 7c8e54
 	// private Color[] dotColor = { new Color(0x595a3b), new Color(0x646c43), new Color(0x7c8e54) };
-	private Color[] dotColor = { new Color(0xfc7c55) };
+	private Color[] dotColor = { new Color(0xfc7c55), new Color(0xa3283a) };
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
-	private final int threshold = 33;
+	private final int threshold = 52;
 
 	public Color[] getDotColor() {
 		return dotColor;
@@ -123,19 +123,21 @@ public class Dot {
 	}
 
 	public Point getMedian() {
+		try {
+			final List<Double> xList = new ArrayList<Double>();
+			final List<Double> yList = new ArrayList<Double>();
 
-		final List<Double> xList = new ArrayList<Double>();
-		final List<Double> yList = new ArrayList<Double>();
+			for (final Point point : foundList) {
+				xList.add(point.getX());
+				yList.add(point.getY());
+			}
 
-		for (final Point point : foundList) {
-			xList.add(point.getX());
-			yList.add(point.getY());
+			Collections.sort(xList);
+			Collections.sort(yList);
+			return new Point(((xList.get(xList.size() / 2)).intValue()), ((yList.get(yList.size() / 2)).intValue()));
+		} catch (Exception e) {
+			return null;
 		}
-
-		Collections.sort(xList);
-		Collections.sort(yList);
-
-		return new Point(((xList.get(xList.size() / 2)).intValue()), ((yList.get(yList.size() / 2)).intValue()));
 	}
 
 	public Point getAverage() {
