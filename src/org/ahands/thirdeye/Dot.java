@@ -12,14 +12,8 @@ import java.util.List;
 
 public class Dot {
 
-	// 183 239 164
-	// private Color dotColor = new Color(0xbdf8a8);
-	// 0x54593b yellow
-	// 0x655146 pink 463930
-	// highlight 595a3b 646c43 7c8e54
-	// private Color[] dotColor = { new Color(0x595a3b), new Color(0x646c43), new Color(0x7c8e54) };
-	// private Color[] dotColor = { new Color(0xfc7c55) };
-	private Color[] dotColor = { new Color(0xffec5332) }; // found w/ Optomizer
+	private Color[] dotColor = { new Color(0xffec5332) };
+
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
@@ -68,13 +62,14 @@ public class Dot {
 		this.dotImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
 		Color rgb;
+		final int skip = 2;
 		for (final Color color : dotColor) {
 			final int known_r = color.getRed();
 			final int known_g = color.getGreen();
 			final int known_b = color.getBlue();
 
-			for (int y = 0; y < h; y = y + 2) {
-				for (int x = 0; x < w; x = x + 2) {
+			for (int y = 0; y < h; y = y + skip) {
+				for (int x = 0; x < w; x = x + skip) {
 					rgb = new Color(camImg.getRGB(x, y));
 					if (Math.abs(known_g - rgb.getGreen()) <= threshold) {
 						if (Math.abs(known_r - rgb.getRed()) <= threshold) {
