@@ -17,10 +17,11 @@ public class PixelChooser {
 	private static int threshold = 0;
 
 	public static void main(String[] args) throws InterruptedException {
+		final String foldername = "2";
 		try {
-			justDotImg = ImageIO.read(new File("resources/2/justdot.png"));
-			noDotImg = ImageIO.read(new File("resources/2/nodot.png"));
-			testImg = ImageIO.read(new File("resources/2/test.png"));
+			justDotImg = ImageIO.read(new File("resources/" + foldername + "/justdot.png"));
+			noDotImg = ImageIO.read(new File("resources/" + foldername + "/nodot.png"));
+			testImg = ImageIO.read(new File("resources/" + foldername + "/test.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -52,13 +53,12 @@ public class PixelChooser {
 				saveList = tmpSaveList;
 			}
 			if (foundCount <= 1) {
+				threshold--;
 				break;
 			}
-			threshold++;
 		}
 
 		System.out.printf("The most unique colors were:\n");
-
 		int i = 0;
 		for (Color color : saveList) {
 			i++;
