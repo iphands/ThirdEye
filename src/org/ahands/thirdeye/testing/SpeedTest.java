@@ -22,7 +22,7 @@ public class SpeedTest {
 
 	public static void main(String[] args) throws InterruptedException {
 		try {
-			camImg = ImageIO.read(new File("resources/test.png"));
+			camImg = ImageIO.read(new File("resources/1/test.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

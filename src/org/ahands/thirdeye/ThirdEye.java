@@ -1,7 +1,6 @@
 package org.ahands.thirdeye;
 
 import java.awt.AWTException;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -11,8 +10,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.JFrame;
-
-import org.ahands.thirdeye.gui.LiveSettings;
 
 public class ThirdEye {
 	static Ellipse2D container;
@@ -26,8 +23,8 @@ public class ThirdEye {
 		frame.setSize(400, 300);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		LiveSettings settings = new LiveSettings();
-		frame.add(settings, BorderLayout.SOUTH);
+		// LiveSettings settings = new LiveSettings();
+		// frame.add(settings, BorderLayout.SOUTH);
 		if (!new File(camPath).exists()) {
 			while (true) {
 				System.out.printf("Waiting for device %s...\n", camPath);
@@ -56,7 +53,8 @@ public class ThirdEye {
 
 		final int W = bImg.getWidth();
 		final int H = bImg.getHeight();
-		frame.setSize(W * 2, H + settings.getHeight());
+		frame.setSize(W * 2, H);
+		// frame.setSize(W * 2, H + settings.getHeight());
 
 		Point dotLocation = new Point(0, 0);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
@@ -117,10 +115,10 @@ public class ThirdEye {
 			g2d.fill(circleMedian);
 
 			if (dotLocation != origin) {
-				//smoothRob.moveMouse(dotLocation);
-				smoothRob.smoothMouseMove(dotLocation);
+				// smoothRob.moveMouse(dotLocation);
+				// smoothRob.smoothMouseMove(dotLocation);
 			}
-			// rLaunch.move(dotLocation);
+			rLaunch.move(dotLocation);
 		}
 	}
 
