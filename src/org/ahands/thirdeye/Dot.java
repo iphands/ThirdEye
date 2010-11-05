@@ -17,11 +17,11 @@ public class Dot {
 	// 0x655146 pink 463930
 	// highlight 595a3b 646c43 7c8e54
 	// private Color[] dotColor = { new Color(0x595a3b), new Color(0x646c43), new Color(0x7c8e54) };
-	private Color[] dotColor = { new Color(0xfc7c55), new Color(0x243d30) };
+	private Color[] dotColor = { new Color(0xfc7c55) };
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
-	private final int threshold = 10;
+	private final int threshold = 20;
 
 	public Color[] getDotColor() {
 		return dotColor;
@@ -71,8 +71,8 @@ public class Dot {
 			final int known_g = color.getGreen();
 			final int known_b = color.getBlue();
 
-			for (int y = 0; y < h; y = y + 2) {
-				for (int x = 0; x < w; x = x + 2) {
+			for (int y = 0; y < h; y = y + 1) {
+				for (int x = 0; x < w; x = x + 1) {
 					rgb = new Color(camImg.getRGB(x, y));
 					if (Math.abs(known_g - rgb.getGreen()) <= threshold) {
 						if (Math.abs(known_r - rgb.getRed()) <= threshold) {

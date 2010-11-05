@@ -5,7 +5,6 @@ import java.awt.Event;
 import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.Scrollbar;
-import java.awt.TextField;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +14,6 @@ public class LiveSettings extends Panel {
 	private static final long serialVersionUID = 8635373202393976754L;
 	Choice choice;
 	Scrollbar thresholdScroll;
-	private TextField t;
 
 	public LiveSettings() {
 		setLayout(new GridLayout(2, 1));

@@ -22,7 +22,7 @@ public class RocketLauncherControl {
 		final int yRateAbs = Math.abs(target.y - mid_y);
 
 		if (xRateAbs > yRateAbs) {
-			if (xRateAbs > 20) {
+			if (xRateAbs > 30) {
 				System.out.println("doing straight move!");
 				moveX(xRate);
 				return;
