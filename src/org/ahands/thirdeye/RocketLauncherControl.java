@@ -23,7 +23,7 @@ public class RocketLauncherControl {
 
 		if (xRateAbs > yRateAbs) {
 			if (xRateAbs > 30) {
-				System.out.println("doing straight move!");
+				// System.out.println("doing straight move!");
 				moveX(xRate);
 				return;
 			}
@@ -39,7 +39,7 @@ public class RocketLauncherControl {
 	int yThreshold = 10;
 
 	private void moveX(int distance) {
-		System.out.println("moving rocket launcher x: " + distance);
+		// System.out.println("moving rocket launcher x: " + distance);
 		try {
 			if (distance < (xThreshold * -1)) {
 				rt.exec("rocket_launcher right " + Math.abs(distance));
@@ -53,7 +53,7 @@ public class RocketLauncherControl {
 	}
 
 	private void moveY(int distance) {
-		System.out.println("moving rocket launcher y: " + distance);
+		// System.out.println("moving rocket launcher y: " + distance);
 
 		try {
 			if (distance < (yThreshold * -1)) {

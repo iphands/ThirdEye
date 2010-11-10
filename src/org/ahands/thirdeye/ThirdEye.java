@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -15,7 +16,7 @@ public class ThirdEye {
 	static Ellipse2D container;
 	static Point origin;
 	public static String camPath = "/dev/video0";
-	public static final int threshold = 4;
+	public static final int deadzoneSize = 4;
 
 	public static void main(String[] args) throws AWTException, InterruptedException {
 		boolean flipped = true;
@@ -49,6 +50,7 @@ public class ThirdEye {
 			bImg = null;
 		}
 		dot.setCamImg(bImg);
+		// dot.fastFindDot();
 		dot.findDot();
 
 		final int W = bImg.getWidth();
@@ -58,7 +60,7 @@ public class ThirdEye {
 
 		Point dotLocation = new Point(0, 0);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
-		final SmoothRob smoothRob = new SmoothRob(origin, threshold + (threshold / 2));
+		final SmoothRob smoothRob = new SmoothRob(origin, deadzoneSize + (deadzoneSize / 2));
 		final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
 		smoothRob.setFlipped(flipped);
 
@@ -114,6 +116,13 @@ public class ThirdEye {
 			g2d.setPaint(avgColor);
 			g2d.fill(circleMedian);
 
+			// Box
+			final Rectangle box = dot.getOldRect();
+			if (box != null) {
+				g2d.setPaint(avgColor);
+				g2d.draw(box);
+			}
+
 			if (dotLocation != origin) {
 				// smoothRob.moveMouse(dotLocation);
 				// smoothRob.smoothMouseMove(dotLocation);
@@ -126,7 +135,7 @@ public class ThirdEye {
 		try {
 			container = null;
 			origin = null;
-			container = new Ellipse2D.Float(dotLocation.x - 10, dotLocation.y - 10, threshold * 4, threshold * 4);
+			container = new Ellipse2D.Float(dotLocation.x - 10, dotLocation.y - 10, deadzoneSize * 4, deadzoneSize * 4);
 			origin = dotLocation;
 		} catch (Exception e) {
 		}
