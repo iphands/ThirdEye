@@ -1,4 +1,4 @@
-package org.ahands.thirdeye;
+package org.ahands.thirdeye.controllers;
 
 import java.awt.AWTException;
 import java.awt.MouseInfo;

@@ -13,6 +13,8 @@ import java.util.Calendar;
 
 import javax.swing.JFrame;
 
+import org.ahands.thirdeye.controllers.SmoothRob;
+
 public class ThirdEye {
 	static Ellipse2D deadZone;
 	static Point origin;

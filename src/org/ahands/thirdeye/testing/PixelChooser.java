@@ -61,19 +61,21 @@ public class PixelChooser {
 			}
 		}
 
+		final String imgsDir = "./tmp/imgs/";
 		System.out.printf("The most unique colors were:\n");
 		int i = 0;
 		for (Color color : saveList) {
 			i++;
 			// System.out.printf("0x%h (%d)\n", color.getRGB(), findColors(justDotImg, color));
 			System.out.printf("new Color(0x%h), ", color.getRGB());
-			writeColorImage(color, testImg, "/tmp/imgs/" + i + ".png");
+			new File(imgsDir).mkdirs();
+			writeColorImage(color, testImg, imgsDir + i + ".png");
 		}
 
 		i = 0;
 		for (Color color : saveList) {
 			i++;
-			System.out.printf(i+ ") 0x%h (%d)\n", color.getRGB(), findColors(justDotImg, color));
+			System.out.printf(i + ") 0x%h (%d)\n", color.getRGB(), findColors(justDotImg, color));
 		}
 
 	}
