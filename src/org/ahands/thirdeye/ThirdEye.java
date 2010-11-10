@@ -9,14 +9,15 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Calendar;
 
 import javax.swing.JFrame;
 
 public class ThirdEye {
-	static Ellipse2D container;
+	static Ellipse2D deadZone;
 	static Point origin;
 	public static String camPath = "/dev/video0";
-	public static final int deadzoneSize = 4;
+	public static final int deadzoneSize = 8;
 
 	public static void main(String[] args) throws AWTException, InterruptedException {
 		boolean flipped = true;
@@ -51,23 +52,30 @@ public class ThirdEye {
 		}
 		dot.setCamImg(bImg);
 		// dot.fastFindDot();
-		dot.findDot();
+		dot.fastFindDot();
 
 		final int W = bImg.getWidth();
 		final int H = bImg.getHeight();
-		frame.setSize(W * 2, H);
+		frame.setSize(W * 2, H + 40);
 		// frame.setSize(W * 2, H + settings.getHeight());
 
 		Point dotLocation = new Point(0, 0);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
 		final SmoothRob smoothRob = new SmoothRob(origin, deadzoneSize + (deadzoneSize / 2));
-		final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
+		// final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
 		smoothRob.setFlipped(flipped);
 
-		final Color avgColor = new Color(0xaa00ff00, true);
-		final Color containerColor = new Color(0x660000ff, true);
+		Rectangle box = dot.getOldRect();
+		final Color avgColor = new Color(0xdd00ff00, true);
+		final Color containerColor = new Color(0xaa0000ff, true);
+		final Color boxColor = new Color(0xaaff00ff, true);
+
+		long time = 1;
 
 		while (true) {
+			final long start = Calendar.getInstance().getTimeInMillis();
+			g2d.setPaint(avgColor);
+			g2d.drawString("time: " + time, 0, 10);
 
 			if (!cam.getCamDevice().equals(camPath)) {
 				cam.setCamDevice(camPath);
@@ -86,7 +94,7 @@ public class ThirdEye {
 			}
 
 			dot.setCamImg(bImg);
-			dot.findDot();
+			dot.fastFindDot();
 
 			final Point avg = dot.getAverage();
 			final Point med = dot.getMedian();
@@ -96,46 +104,52 @@ public class ThirdEye {
 				dotLocation = null;
 			}
 
-			if ((dotLocation == null) || (container == null) || (origin == null)) {
+			if ((dotLocation == null) || (deadZone == null) || (origin == null)) {
+				dot.setOldRect(null);
 				initImages(dotLocation);
 				smoothRob.setOrigin(origin);
 				smoothRob.setFlipped(flipped);
 				g2d.drawImage(bImg, null, 0, 0);
+				time = Calendar.getInstance().getTimeInMillis() - start;
+				g2d.drawString("dot: not found", 0, 25);
 				continue;
 			}
 
 			g2d.drawImage(bImg, null, 0, 0);
-			g2d.drawImage(dot.getDotImg(), null, W, 0);
+			// g2d.drawImage(dot.getDotImg(), null, W, 0);
 
 			// Container
 			g2d.setPaint(containerColor);
-			g2d.fill(container);
+			g2d.fill(deadZone);
 
 			// Circle
 			final Shape circleMedian = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 10, 10);
 			g2d.setPaint(avgColor);
 			g2d.fill(circleMedian);
 
+			g2d.drawString("dot: " + dotLocation.x + ", " + dotLocation.y, 0, 25);
+
 			// Box
-			final Rectangle box = dot.getOldRect();
+			box = dot.getOldRect();
 			if (box != null) {
-				g2d.setPaint(avgColor);
+				g2d.setPaint(boxColor);
 				g2d.draw(box);
 			}
 
 			if (dotLocation != origin) {
-				// smoothRob.moveMouse(dotLocation);
+				smoothRob.moveMouse(dotLocation);
 				// smoothRob.smoothMouseMove(dotLocation);
 			}
-			rLaunch.move(dotLocation);
+			// rLaunch.move(dotLocation);
+			time = Calendar.getInstance().getTimeInMillis() - start;
 		}
 	}
 
 	private static void initImages(Point dotLocation) {
 		try {
-			container = null;
+			deadZone = null;
 			origin = null;
-			container = new Ellipse2D.Float(dotLocation.x - 10, dotLocation.y - 10, deadzoneSize * 4, deadzoneSize * 4);
+			deadZone = new Ellipse2D.Float(dotLocation.x - 10, dotLocation.y - 10, deadzoneSize * 4, deadzoneSize * 4);
 			origin = dotLocation;
 		} catch (Exception e) {
 		}

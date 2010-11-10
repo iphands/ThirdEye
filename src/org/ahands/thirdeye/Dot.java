@@ -51,59 +51,27 @@ public class Dot {
 		this.camImg = camImg;
 	}
 
-	public void findDot() {
-		if (camImg == null) {
-			return;
-		}
-
-		foundList.clear();
-		final int h = camImg.getHeight();
-		final int w = camImg.getWidth();
-		this.dotImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-
-		Color rgb;
-		final int skip = 1;
-		for (final Color color : dotColor) {
-			final int known_r = color.getRed();
-			final int known_g = color.getGreen();
-			final int known_b = color.getBlue();
-
-			for (int y = 0; y < h; y = y + skip) {
-				for (int x = 0; x < w; x = x + skip) {
-					// System.out.println(x + " " + y);
-					rgb = new Color(camImg.getRGB(x, y));
-					if (Math.abs(known_g - rgb.getGreen()) <= threshold) {
-						if (Math.abs(known_r - rgb.getRed()) <= threshold) {
-							if (Math.abs(known_b - rgb.getBlue()) <= threshold) {
-								foundList.add(new Point(x, y));
-								dotImg.setRGB(x, y, 0xff00ff00);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
 	public void fastFindDot() {
-		final long start = Calendar.getInstance().getTimeInMillis();
+		// final long start = Calendar.getInstance().getTimeInMillis();
 		if (oldRect != null) {
-			System.out.print("fast ");
+			// System.out.print("fast ");
 			try {
 				findDot(oldRect.x, oldRect.y, oldRect.width + oldRect.x, oldRect.height + oldRect.y);
 			} catch (ArrayIndexOutOfBoundsException e) {
 			}
+
 			if (foundList.size() < 1) {
 				oldRect = null;
+				fastFindDot();
 			}
 		} else {
-			System.out.print("norm ");
+			// System.out.print("norm ");
 			final int h = camImg.getHeight();
 			final int w = camImg.getWidth();
 			findDot(0, 0, w, h);
 
 		}
-		System.out.println(Calendar.getInstance().getTimeInMillis() - start);
+		// System.out.println(Calendar.getInstance().getTimeInMillis() - start);
 	}
 
 	public void findDot(final int startX, final int startY, final int w, final int h) {
@@ -115,7 +83,7 @@ public class Dot {
 		this.dotImg = new BufferedImage(camImg.getWidth(), camImg.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 		Color rgb;
-		final int skip = 1;
+		final int skip = 2;
 		for (final Color color : dotColor) {
 			final int known_r = color.getRed();
 			final int known_g = color.getGreen();
