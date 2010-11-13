@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import javax.swing.JFrame;
 
+import org.ahands.thirdeye.controllers.RocketLauncherControl;
 import org.ahands.thirdeye.controllers.SmoothRob;
 
 public class ThirdEye {
@@ -64,7 +65,7 @@ public class ThirdEye {
 		Point dotLocation = new Point(0, 0);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
 		final SmoothRob smoothRob = new SmoothRob(origin, deadzoneSize + (deadzoneSize / 2));
-		// final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
+		final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
 		smoothRob.setFlipped(flipped);
 
 		Rectangle box = dot.getOldRect();
@@ -77,7 +78,8 @@ public class ThirdEye {
 		while (true) {
 			final long start = Calendar.getInstance().getTimeInMillis();
 			g2d.setPaint(avgColor);
-			g2d.drawString("time: " + time, 0, 10);
+
+			g2d.drawString(String.format("%s %.2f", "fps: ", 1000 / (float) time), 0, 10);
 
 			if (!cam.getCamDevice().equals(camPath)) {
 				cam.setCamDevice(camPath);
@@ -89,6 +91,7 @@ public class ThirdEye {
 				} else {
 					bImg = cam.getImg();
 				}
+				// bImg = cam.getGreyImg();
 			} catch (Exception e) {
 				e.printStackTrace();
 				cam.setCamDevice(camPath);
@@ -118,7 +121,7 @@ public class ThirdEye {
 			}
 
 			g2d.drawImage(bImg, null, 0, 0);
-			// g2d.drawImage(dot.getDotImg(), null, W, 0);
+			g2d.drawImage(dot.getDotImg(), null, W, 0);
 
 			// Container
 			g2d.setPaint(containerColor);
@@ -138,11 +141,11 @@ public class ThirdEye {
 				g2d.draw(box);
 			}
 
-			if (dotLocation != origin) {
-				smoothRob.moveMouse(dotLocation);
-				// smoothRob.smoothMouseMove(dotLocation);
-			}
-			// rLaunch.move(dotLocation);
+			// if (dotLocation != origin) {
+			// smoothRob.moveMouse(dotLocation);
+			// // smoothRob.smoothMouseMove(dotLocation);
+			// }
+			rLaunch.move(dotLocation);
 			time = Calendar.getInstance().getTimeInMillis() - start;
 		}
 	}

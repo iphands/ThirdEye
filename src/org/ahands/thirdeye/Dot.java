@@ -12,12 +12,12 @@ import java.util.List;
 public class Dot {
 
 	private Color[] dotColor = { new Color(0xffec5332) };
-	// private Color[] dotColor = { new Color(0xff583e27) };
+	// private Color[] dotColor = { new Color(0xff443e1c) };
 
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
-	private final int threshold = 33;
+	private final int threshold = 4;
 
 	private Rectangle oldRect;
 
@@ -82,7 +82,7 @@ public class Dot {
 		this.dotImg = new BufferedImage(camImg.getWidth(), camImg.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 		Color rgb;
-		final int skip = 2;
+		final int skip = 1;
 		for (final Color color : dotColor) {
 			final int known_r = color.getRed();
 			final int known_g = color.getGreen();

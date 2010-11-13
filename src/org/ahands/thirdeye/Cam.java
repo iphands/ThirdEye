@@ -1,8 +1,11 @@
 package org.ahands.thirdeye;
 
+import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ColorConvertOp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -52,6 +55,12 @@ public class Cam {
 		} catch (V4L4JException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public BufferedImage getGreyImg() throws V4L4JException, IOException {
+		BufferedImageOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+		return op.filter(this.getFlippedImg(), null);
+
 	}
 
 	public BufferedImage getFlippedImg() throws V4L4JException, IOException {
