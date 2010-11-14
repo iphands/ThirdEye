@@ -4,7 +4,6 @@ import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -13,6 +12,7 @@ import java.util.Calendar;
 
 import javax.swing.JFrame;
 
+import org.ahands.thirdeye.controllers.MouseDragger;
 import org.ahands.thirdeye.controllers.RocketLauncherControl;
 import org.ahands.thirdeye.controllers.SmoothRob;
 
@@ -59,16 +59,17 @@ public class ThirdEye {
 
 		final int W = bImg.getWidth();
 		final int H = bImg.getHeight();
-		frame.setSize(W * 2, H + 40);
+		frame.setSize((W * 2) + 20, H + 40);
 		// frame.setSize(W * 2, H + settings.getHeight());
 
 		Point dotLocation = new Point(0, 0);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
 		final SmoothRob smoothRob = new SmoothRob(origin, deadzoneSize + (deadzoneSize / 2));
+		final MouseDragger dragger = new MouseDragger(W, H);
 		final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
 		smoothRob.setFlipped(flipped);
 
-		Rectangle box = dot.getOldRect();
+		Shape box = dot.getOldRect();
 		final Color avgColor = new Color(0xdd00ff00, true);
 		final Color containerColor = new Color(0xaa0000ff, true);
 		final Color boxColor = new Color(0xaaff00ff, true);
@@ -124,8 +125,8 @@ public class ThirdEye {
 			g2d.drawImage(dot.getDotImg(), null, W, 0);
 
 			// Container
-			g2d.setPaint(containerColor);
-			g2d.fill(deadZone);
+			// g2d.setPaint(containerColor);
+			// g2d.fill(deadZone);
 
 			// Circle
 			final Shape circleMedian = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 10, 10);
@@ -136,16 +137,24 @@ public class ThirdEye {
 
 			// Box
 			box = dot.getOldRect();
+			// box = dragger.getBounds();
 			if (box != null) {
 				g2d.setPaint(boxColor);
 				g2d.draw(box);
 			}
 
-			// if (dotLocation != origin) {
-			// smoothRob.moveMouse(dotLocation);
-			// // smoothRob.smoothMouseMove(dotLocation);
+			// box = dragger.getBounds2();
+			// if (box != null) {
+			// g2d.setPaint(boxColor);
+			// g2d.draw(box);
 			// }
-			rLaunch.move(dotLocation);
+
+			if (dotLocation != origin) {
+				smoothRob.moveMouse(dotLocation);
+				// smoothRob.smoothMouseMove(dotLocation);
+			}
+			// rLaunch.move(dotLocation);
+			//dragger.move(dotLocation);
 			time = Calendar.getInstance().getTimeInMillis() - start;
 		}
 	}

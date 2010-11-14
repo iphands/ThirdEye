@@ -17,7 +17,7 @@ public class PixelChooser {
 	private static int threshold = 0;
 
 	public static void main(String[] args) throws InterruptedException {
-		final String foldername = "jerry";
+		final String foldername = "7";
 		try {
 			justDotImg = ImageIO.read(new File("resources/" + foldername + "/justdot.png"));
 			noDotImg = ImageIO.read(new File("resources/" + foldername + "/nodot.png"));
@@ -53,7 +53,7 @@ public class PixelChooser {
 				saveList = tmpSaveList;
 			}
 
-			if (foundCount <= 15) {
+			if (foundCount <= 1) {
 				threshold--;
 				break;
 			} else {
@@ -71,6 +71,8 @@ public class PixelChooser {
 			new File(imgsDir).mkdirs();
 			writeColorImage(color, testImg, imgsDir + i + ".png");
 		}
+
+		System.out.printf("\n");
 
 		i = 0;
 		for (Color color : saveList) {

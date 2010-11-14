@@ -11,13 +11,13 @@ import java.util.List;
 
 public class Dot {
 
-	private Color[] dotColor = { new Color(0xffec5332) };
-	// private Color[] dotColor = { new Color(0xff443e1c) };
+	// private Color[] dotColor = { new Color(0xffec5332) };
+	private Color[] dotColor = { new Color(0xff5a251d) };
 
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
-	private final int threshold = 4;
+	private final int threshold = 10;
 
 	private Rectangle oldRect;
 
