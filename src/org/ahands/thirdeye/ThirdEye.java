@@ -154,6 +154,7 @@ public class ThirdEye {
 			// // smoothRob.smoothMouseMove(dotLocation);
 			// }
 			// rLaunch.move(dotLocation);
+
 			dragger.move(dotLocation);
 			time = Calendar.getInstance().getTimeInMillis() - start;
 		}
