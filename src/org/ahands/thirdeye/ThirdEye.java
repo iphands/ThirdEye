@@ -58,8 +58,8 @@ public class ThirdEye {
 		// dot.fastFindDot();
 		dot.fastFindDot();
 
-		final int W = bImg.getWidth();
-		final int H = bImg.getHeight();
+		int W = 640;
+		int H = 480;
 		frame.setSize((W * 2) + 20, H + 40);
 		// frame.setSize(W * 2, H + settings.getHeight());
 
@@ -78,6 +78,10 @@ public class ThirdEye {
 		long time = 1;
 
 		while (true) {
+
+			W = frame.getWidth() / 2;
+			H = frame.getHeight();
+
 			final long start = Calendar.getInstance().getTimeInMillis();
 			g2d.setPaint(avgColor);
 
@@ -111,28 +115,36 @@ public class ThirdEye {
 				dotLocation = null;
 			}
 
+			// draw image
+			final BufferedImage scaleBImg = new BufferedImage(160, 120, BufferedImage.TYPE_INT_ARGB);
+			final Graphics2D scaleG2D = scaleBImg.createGraphics();
+			scaleG2D.drawImage(bImg, null, 0, 0);
+
 			if ((dotLocation == null) || (deadZone == null) || (origin == null)) {
 				dot.setOldRect(null);
 				initImages(dotLocation);
 				smoothRob.setOrigin(origin);
 				smoothRob.setFlipped(flipped);
-				g2d.drawImage(bImg, null, 0, 0);
 				time = Calendar.getInstance().getTimeInMillis() - start;
+
+				g2d.drawImage(scaleBImg, 0, 0, W, H, null);
 				g2d.drawString("dot: not found", 0, 25);
+				// g2d.drawImage(bImg, 0, 0, W, H, null);
+
 				continue;
 			}
 
-			g2d.drawImage(bImg, null, 0, 0);
-			g2d.drawImage(dot.getDotImg(), null, W, 0);
+			// g2d.drawImage(bImg, 0, 0, W, H, null);
+			g2d.drawImage(dot.getDotImg(), W, 0, W, H, null);
 
 			// Container
 			// g2d.setPaint(containerColor);
 			// g2d.fill(deadZone);
 
 			// Circle
-			final Shape circleMedian = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 10, 10);
-			g2d.setPaint(avgColor);
-			g2d.fill(circleMedian);
+			final Shape circleMedian = new Ellipse2D.Float(dotLocation.x - 2, dotLocation.y - 2, 5, 5);
+			scaleG2D.setPaint(avgColor);
+			scaleG2D.fill(circleMedian);
 
 			g2d.drawString("dot: " + dotLocation.x + ", " + dotLocation.y, 0, 25);
 
@@ -140,8 +152,8 @@ public class ThirdEye {
 			box = dot.getOldRect();
 			// box = dragger.getBounds();
 			if (box != null) {
-				g2d.setPaint(boxColor);
-				g2d.draw(box);
+				scaleG2D.setPaint(boxColor);
+				scaleG2D.draw(box);
 			}
 
 			// box = dragger.getBounds2();
@@ -150,13 +162,16 @@ public class ThirdEye {
 			// g2d.draw(box);
 			// }
 
+			g2d.drawImage(scaleBImg, 0, 0, W, H, null);
+
 			// if (dotLocation != origin) {
 			// smoothRob.moveMouse(dotLocation);
 			// // smoothRob.smoothMouseMove(dotLocation);
 			// }
 			// rLaunch.move(dotLocation);
 
-			dragger.move(dotLocation);
+			// dragger.move(dotLocation);
+
 			time = Calendar.getInstance().getTimeInMillis() - start;
 		}
 	}

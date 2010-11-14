@@ -21,8 +21,8 @@ public class Cam {
 
 	private String camDevString;
 	FrameGrabber fg;
-	int width = 320;
-	int height = 240;
+	int width = 160;
+	int height = 120;
 	ByteBuffer bb;
 	byte[] b;
 	private VideoDevice vd;
@@ -67,6 +67,7 @@ public class Cam {
 		BufferedImage bufferedImage = this.getImg();
 		AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
 		tx.translate(-bufferedImage.getWidth(null), 0);
+		
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 		bufferedImage = op.filter(bufferedImage, null);
 
