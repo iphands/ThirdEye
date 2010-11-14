@@ -12,7 +12,9 @@ import java.util.List;
 public class Dot {
 
 	// private Color[] dotColor = { new Color(0xffec5332) };
-	private Color[] dotColor = { new Color(0xffff737c), new Color(0xffd1473a), new Color(0xffe25d4c) };
+	private Color[] dotColor = { new Color(0xffff2753), new Color(0xffff2450), new Color(0xffff2754),
+			new Color(0xffff2151), new Color(0xffff2756), new Color(0xffff2757), new Color(0xffff2555) };
+	// private Color[] dotColor = { new Color(0xffff737c), new Color(0xffd1473a), new Color(0xffe25d4c) };
 
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;

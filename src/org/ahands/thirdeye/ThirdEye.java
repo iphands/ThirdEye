@@ -66,7 +66,7 @@ public class ThirdEye {
 		Point dotLocation = new Point(0, 0);
 		final Graphics2D g2d = (Graphics2D) frame.getRootPane().getGraphics();
 		final SmoothRob smoothRob = new SmoothRob(origin, deadzoneSize + (deadzoneSize / 2));
-		final MouseDragger dragger = new MouseDragger(W, H);
+		final MouseDragger dragger = new MouseDragger(bImg.getWidth(), bImg.getHeight());
 		final RocketLauncherControl rLaunch = new RocketLauncherControl(W / 2, H / 2);
 		smoothRob.setFlipped(flipped);
 
@@ -78,13 +78,11 @@ public class ThirdEye {
 		long time = 1;
 
 		while (true) {
-
+			final long start = Calendar.getInstance().getTimeInMillis();
 			W = frame.getWidth() / 2;
 			H = frame.getHeight();
 
-			final long start = Calendar.getInstance().getTimeInMillis();
 			g2d.setPaint(avgColor);
-
 			g2d.drawString(String.format("%s %.2f", "fps: ", 1000 / (float) time), 0, 10);
 
 			if (!cam.getCamDevice().equals(camPath)) {
@@ -163,6 +161,7 @@ public class ThirdEye {
 			// }
 
 			g2d.drawImage(scaleBImg, 0, 0, W, H, null);
+			scaleG2D.dispose();
 
 			// if (dotLocation != origin) {
 			// smoothRob.moveMouse(dotLocation);
@@ -170,7 +169,7 @@ public class ThirdEye {
 			// }
 			// rLaunch.move(dotLocation);
 
-			// dragger.move(dotLocation);
+			dragger.move(dotLocation);
 
 			time = Calendar.getInstance().getTimeInMillis() - start;
 		}
