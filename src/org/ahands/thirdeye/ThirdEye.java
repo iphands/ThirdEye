@@ -149,12 +149,12 @@ public class ThirdEye {
 			// g2d.draw(box);
 			// }
 
-			if (dotLocation != origin) {
-				smoothRob.moveMouse(dotLocation);
-				// smoothRob.smoothMouseMove(dotLocation);
-			}
+			// if (dotLocation != origin) {
+			// smoothRob.moveMouse(dotLocation);
+			// // smoothRob.smoothMouseMove(dotLocation);
+			// }
 			// rLaunch.move(dotLocation);
-			//dragger.move(dotLocation);
+			dragger.move(dotLocation);
 			time = Calendar.getInstance().getTimeInMillis() - start;
 		}
 	}

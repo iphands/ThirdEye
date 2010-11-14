@@ -12,12 +12,12 @@ import java.util.List;
 public class Dot {
 
 	// private Color[] dotColor = { new Color(0xffec5332) };
-	private Color[] dotColor = { new Color(0xff5a251d) };
+	private Color[] dotColor = { new Color(0xffff737c), new Color(0xffd1473a), new Color(0xffe25d4c) };
 
 	private List<Point> foundList = new ArrayList<Point>();
 	private BufferedImage camImg;
 	private BufferedImage dotImg;
-	private final int threshold = 10;
+	private int threshold = 35;
 
 	private Rectangle oldRect;
 
@@ -207,6 +207,28 @@ public class Dot {
 		} catch (ArithmeticException e) {
 			return null;
 		}
+	}
+
+	public Point multiPass(int passNum) {
+		int saveThreshold = this.threshold;
+		int x = 0;
+		int y = 0;
+		for (int i = 0; i < passNum; i++) {
+			fastFindDot();
+			final Point avg = getAverage();
+			final Point med = getMedian();
+			try {
+				x += (avg.x + med.x) / 2;
+				y += (avg.y + med.y) / 2;
+			} catch (Exception e) {
+				this.threshold = saveThreshold;
+				return null;
+			}
+			threshold--;
+		}
+
+		this.threshold = saveThreshold;
+		return new Point(x / passNum, y / passNum);
 	}
 
 	public void setOldRect(Rectangle oldRect) {

@@ -2,11 +2,13 @@ package org.ahands.thirdeye.controllers;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.geom.Ellipse2D;
+import java.util.Date;
 
 public class MouseDragger {
 	final private Robot rob;
@@ -64,7 +66,7 @@ public class MouseDragger {
 		return false;
 	}
 
-	private Point oldLocation = new Point(0, 0);
+	private Point oldLocation = MouseInfo.getPointerInfo().getLocation();
 
 	private int getDirection(final Point current, final Point old) {
 		int dir = 0;
@@ -84,7 +86,7 @@ public class MouseDragger {
 		return dir;
 	}
 
-	private boolean oob = false;
+	// private boolean oob = false;
 
 	// public void move(final Point dotLocation) {
 	// if (bounds == null) {
@@ -155,7 +157,23 @@ public class MouseDragger {
 	// }
 
 	public void move(final Point dotLocation) {
-		rob.mouseMove((dotLocation.x * defaultXSpeed) * 2, (dotLocation.y * defaultYSpeed) * 2);
+		if (Math.abs(oldLocation.distance(dotLocation)) > 2) {
+			final Point mousePos = MouseInfo.getPointerInfo().getLocation();
+			int x_move;
+			int y_move;
+			if (Math.abs(oldLocation.distance(dotLocation)) > 10) {
+				System.out.println("Fast move detected " + new Date());
+				x_move = (int) (((dotLocation.x - oldLocation.x) * defaultXSpeed * 3.5) + mousePos.x);
+				y_move = (int) (((dotLocation.y - oldLocation.y) * defaultXSpeed * 3.5) + mousePos.y);
+			} else {
+				x_move = ((dotLocation.x - oldLocation.x) * 3) + mousePos.x;
+				y_move = ((dotLocation.y - oldLocation.y) * 3) + mousePos.y;
+			}
+
+			rob.mouseMove(x_move, y_move);
+		}
+
+		oldLocation = dotLocation;
 	}
 
 	public void setBounds2(Shape bounds2) {

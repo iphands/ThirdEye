@@ -17,7 +17,7 @@ public class PixelChooser {
 	private static int threshold = 0;
 
 	public static void main(String[] args) throws InterruptedException {
-		final String foldername = "7";
+		final String foldername = "terry-light";
 		try {
 			justDotImg = ImageIO.read(new File("resources/" + foldername + "/justdot.png"));
 			noDotImg = ImageIO.read(new File("resources/" + foldername + "/nodot.png"));
