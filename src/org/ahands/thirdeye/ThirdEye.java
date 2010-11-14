@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import org.ahands.thirdeye.controllers.MouseDragger;
 import org.ahands.thirdeye.controllers.RocketLauncherControl;
 import org.ahands.thirdeye.controllers.SmoothRob;
+import org.ahands.thirdeye.input.Cam;
 
 public class ThirdEye {
 	static Ellipse2D deadZone;

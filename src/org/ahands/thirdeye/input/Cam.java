@@ -1,4 +1,4 @@
-package org.ahands.thirdeye;
+package org.ahands.thirdeye.input;
 
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
