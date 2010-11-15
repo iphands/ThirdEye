@@ -1,9 +1,14 @@
 package org.ahands.thirdeye.gui;
 
+import java.io.IOException;
+
+import org.ahands.thirdeye.input.Cam;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -12,6 +17,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
+
+import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 
 public class LiveSettings implements Runnable {
 
@@ -59,10 +66,22 @@ public class LiveSettings implements Runnable {
 			}
 		});
 
+		Image image = null;
+		try {
+			image = new Cam("/dev/video0").getSwtImg();
+		} catch (V4L4JException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		final Group imgsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
 		imgsGroup.setText("Images");
 		imgsGroup.setLayout(new GridLayout());
 		imgsGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		imgsGroup.setBackgroundImage(image);
 
 		final Group settingsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
 		settingsGroup.setText("Settings");
