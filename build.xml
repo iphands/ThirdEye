@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project HTMLValidation">
+  <path id="build-classpath">
+    <fileset dir="./lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <manifestclasspath property="lib.list" jarfile="lib/v4l4j.jar">
+    <classpath refid="build-classpath"/>
+  </manifestclasspath>
+
+  <target name="compile">
+    <mkdir dir="./bin/" />
+    <javac srcdir="./src/" destdir="./bin" classpathref="classpath" debug="on" debuglevel="lines,vars,source" />    
+  </target>
+
+  <target name="create_run_jar" depends="compile">
+    <jar jarfile="./ThirdEye.jar" basedir="." includes="org/ahands/thirdeye/**" >
+      <manifest>
+	<attribute name="Main-Class" value="org.ahands.thirdeye.ThirdEye"/>
+	<attribute name="Class-Path" value="${lib.list}"/>
+      </manifest>
+      <fileset dir="./bin" />
+    </jar>
+  </target>
+</project>

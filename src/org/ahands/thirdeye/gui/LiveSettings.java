@@ -1,46 +1,90 @@
 package org.ahands.thirdeye.gui;
 
-import java.awt.Choice;
-import java.awt.Event;
-import java.awt.GridLayout;
-import java.awt.Panel;
-import java.awt.Scrollbar;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.Shell;
 
-public class LiveSettings extends Panel {
-	private static final long serialVersionUID = 8635373202393976754L;
-	Choice choice;
-	Scrollbar thresholdScroll;
+public class LiveSettings implements Runnable {
 
 	public LiveSettings() {
-		setLayout(new GridLayout(2, 1));
-		choice = new Choice();
-		final File dev = new File("/dev/");
-		List<File> tmpList = Arrays.asList(dev.listFiles());
-		Collections.reverse(tmpList);
-		for (File file : tmpList) {
-			final String fileName = file.getName();
-			if (fileName.startsWith("video")) {
-				choice.add("/dev/" + fileName);
-			}
-		}
-		choice.setEnabled(false);
-		add(choice);
 
-		thresholdScroll = new Scrollbar(Scrollbar.HORIZONTAL, 0, 100, 1, 100);
-		// thresholdScroll.addAdjustmentListener(this);
-		this.add(thresholdScroll);
 	}
 
-	public boolean action(Event event, Object object) {
-		if (event.target == choice) {
-			// ThirdEye.camPath = choice.getSelectedItem();
-			return (true);
-		} else {
-			return (false);
+	@Override
+	public void run() {
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		shell.setText("ThirdEye");
+
+		initGUI(shell);
+
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
 		}
+		display.dispose();
+	}
+
+	private void initGUI(final Shell shell) {
+		shell.setLayout(new FillLayout(SWT.VERTICAL));
+		final Menu menu = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(menu);
+
+		final MenuItem fileItem = new MenuItem(menu, SWT.CASCADE);
+		fileItem.setText("&File");
+
+		final Menu fileSubMenu = new Menu(shell, SWT.DROP_DOWN);
+		fileItem.setMenu(fileSubMenu);
+
+		new MenuItem(fileSubMenu, SWT.SEPARATOR);
+
+		final MenuItem exitMenuItem = new MenuItem(fileSubMenu, SWT.PUSH);
+		exitMenuItem.setText("E&xit");
+		exitMenuItem.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event arg0) {
+				// System.exit(0);
+				shell.dispose();
+			}
+		});
+
+		final Group imgsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
+		imgsGroup.setText("Images");
+		imgsGroup.setLayout(new GridLayout());
+		imgsGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+		final Group settingsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
+		settingsGroup.setText("Settings");
+		settingsGroup.setLayout(new FillLayout(SWT.VERTICAL));
+		doSettings(settingsGroup);
+	}
+
+	private void doSettings(Group settingsGroup) {
+		final Scale deadzoneScale = new Scale(settingsGroup, SWT.BORDER);
+		deadzoneScale.setSize(200, 64);
+		deadzoneScale.setMaximum(50);
+		deadzoneScale.setPageIncrement(1);
+
+		final Scale xAccelScale = new Scale(settingsGroup, SWT.BORDER);
+		xAccelScale.setSize(200, 64);
+		xAccelScale.setMaximum(50);
+		xAccelScale.setPageIncrement(1);
+
+		final Scale yAccelScale = new Scale(settingsGroup, SWT.BORDER);
+		yAccelScale.setSize(200, 64);
+		yAccelScale.setMaximum(50);
+		yAccelScale.setPageIncrement(1);
+
 	}
 }

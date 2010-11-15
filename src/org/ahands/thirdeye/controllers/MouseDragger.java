@@ -7,9 +7,7 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Shape;
 import java.awt.Toolkit;
-import java.awt.geom.Ellipse2D;
 import java.util.Calendar;
-import java.util.Date;
 
 public class MouseDragger {
 	final private Robot rob;
@@ -21,6 +19,34 @@ public class MouseDragger {
 	final int defaultYSpeed;
 	final Point camCenter;
 	final Point screenCenter;
+
+	private float deadzone = (float) 1.5;
+	private float xAccel = (float) 1.5;
+	private float yAccel = (float) 1.2;
+
+	public float getDeadzone() {
+		return deadzone;
+	}
+
+	public void setDeadzone(float deadzone) {
+		this.deadzone = deadzone;
+	}
+
+	public float getxAccel() {
+		return xAccel;
+	}
+
+	public void setxAccel(float xAccel) {
+		this.xAccel = xAccel;
+	}
+
+	public float getyAccel() {
+		return yAccel;
+	}
+
+	public void setyAccel(float yAccel) {
+		this.yAccel = yAccel;
+	}
 
 	private Shape bounds = null;
 	private Shape bounds2 = null;
@@ -61,22 +87,17 @@ public class MouseDragger {
 
 	public void move(final Point dotLocation) {
 		time = Calendar.getInstance().getTimeInMillis() - oldTime;
-		final int speed = (int) (((Math.abs(oldLocation.distance(dotLocation)) / time) * 100) / 1.5);
+		final float speed = (float) (((Math.abs(oldLocation.distance(dotLocation)) / time) * 100) / 1.2);
 
-		if (speed > 1) {
+		if (speed > deadzone) {
 			final Point mousePos = MouseInfo.getPointerInfo().getLocation();
 			final int x_move;
 			final int y_move;
 
-			if (speed > 3) {
-				x_move = (((dotLocation.x - oldLocation.x) * defaultXSpeed) * speed) + mousePos.x;
-				y_move = (((dotLocation.y - oldLocation.y) * defaultYSpeed) * speed) + mousePos.y;
-			} else {
-				x_move = (((dotLocation.x - oldLocation.x) * defaultXSpeed)) + mousePos.x;
-				y_move = (((dotLocation.y - oldLocation.y) * defaultYSpeed)) + mousePos.y;
-			}
+			x_move = (int) ((dotLocation.x - oldLocation.x) * (speed * (speed / xAccel)));
+			y_move = (int) ((dotLocation.y - oldLocation.y) * (speed * (speed / yAccel)));
 
-			rob.mouseMove(x_move, y_move);
+			rob.mouseMove(x_move + mousePos.x, y_move + mousePos.y);
 		}
 
 		oldLocation = dotLocation;
