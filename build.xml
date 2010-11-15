@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar for Project HTMLValidation">
-  <path id="build-classpath">
-    <fileset dir="./lib">
-      <include name="*.jar"/>
-    </fileset>
+  <path id="classpath">
+    <fileset id="externjars" dir="lib" includes="**/*.jar" />
+    <fileset id="externlibs" dir="lib" includes="**/*.so" />
   </path>
 
   <manifestclasspath property="lib.list" jarfile="lib/v4l4j.jar">
-    <classpath refid="build-classpath"/>
+    <classpath refid="classpath"/>
   </manifestclasspath>
 
   <target name="compile">
@@ -16,12 +15,32 @@
   </target>
 
   <target name="create_run_jar" depends="compile">
-    <jar jarfile="./ThirdEye.jar" basedir="." includes="org/ahands/thirdeye/**" >
+    <jar destfile="./ThirdEye.jar" filesetmanifest="mergewithoutmain">
       <manifest>
-	<attribute name="Main-Class" value="org.ahands.thirdeye.ThirdEye"/>
-	<attribute name="Class-Path" value="${lib.list}"/>
+	<attribute name="Main-Class" value="org.ahands.thirdeye.ThirdEye" />
+	<!--<attribute name="Class-Path" value="." />-->
+	<attribute name="Class-Path" value="."/>
       </manifest>
       <fileset dir="./bin" />
+      <!--<zipgroupfileset refid="externjars" />-->
+      <fileset refid="externjars" />
+      <fileset refid="externlibs" />
     </jar>
   </target>
+
 </project>
+
+<!--
+   <path id="build-classpath">
+                <fileset dir="${dist}/lib">
+                        <include name="*.jar"/>
+                </fileset>
+        </path>
+
+        <jar jarfile="${dist}/lib/myprog.jar" basedir="${build}" includes="com/my/prog/**" >
+                <manifest>
+                        <attribute name="Main-Class" value="com.my.prog.MyProg"/>
+                        <attribute name="Class-Path" value="${lib.list}"/>
+                </manifest>
+        </jar>
+-->
