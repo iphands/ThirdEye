@@ -44,8 +44,7 @@ public class Cam {
 		int w = width, h = height, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
 		try {
 			this.vd = new VideoDevice(dev);
-			// this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);
-			this.fg = vd.getRawFrameGrabber(w, h, 0, 0);
+			this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);
 			this.fg.startCapture();
 		} catch (V4L4JException e) {
 			e.printStackTrace();
@@ -63,8 +62,7 @@ public class Cam {
 		int w = width, h = height, std = V4L4JConstants.STANDARD_WEBCAM, channel = 0, qty = 60;
 		try {
 			this.vd = new VideoDevice(dev);
-			// this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);
-			this.fg = vd.getRawFrameGrabber(w, h, channel, std);
+			this.fg = vd.getJPEGFrameGrabber(w, h, channel, std, qty);
 			this.fg.startCapture();
 		} catch (V4L4JException e) {
 			e.printStackTrace();
@@ -92,10 +90,8 @@ public class Cam {
 		bb = fg.getFrame();
 		b = new byte[bb.limit()];
 		bb.get(b);
-		
-		ImageData[] il = new ImageLoader().load(new ByteArrayInputStream(b));
-		
-		return new Image(Display.getCurrent(),
+
+		return new Image(Display.getCurrent(), new ImageData(new ByteArrayInputStream(b)));
 	}
 
 	public BufferedImage getImg() throws V4L4JException, IOException {
@@ -104,52 +100,4 @@ public class Cam {
 		bb.get(b);
 		return ImageIO.read(new ByteArrayInputStream(b));
 	}
-
-	private ImageData convertToSWT(BufferedImage bufferedImage) {
-		if (bufferedImage.getColorModel() instanceof DirectColorModel) {
-			DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
-			PaletteData palette = new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel
-					.getBlueMask());
-			ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel
-					.getPixelSize(), palette);
-			WritableRaster raster = bufferedImage.getRaster();
-			int[] pixelArray = new int[3];
-			for (int y = 0; y < data.height; y++) {
-				for (int x = 0; x < data.width; x++) {
-					raster.getPixel(x, y, pixelArray);
-					int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
-					data.setPixel(x, y, pixel);
-				}
-			}
-			return data;
-		} else if (bufferedImage.getColorModel() instanceof IndexColorModel) {
-			IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
-			int size = colorModel.getMapSize();
-			byte[] reds = new byte[size];
-			byte[] greens = new byte[size];
-			byte[] blues = new byte[size];
-			colorModel.getReds(reds);
-			colorModel.getGreens(greens);
-			colorModel.getBlues(blues);
-			RGB[] rgbs = new RGB[size];
-			for (int i = 0; i < rgbs.length; i++) {
-				rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
-			}
-			PaletteData palette = new PaletteData(rgbs);
-			ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel
-					.getPixelSize(), palette);
-			data.transparentPixel = colorModel.getTransparentPixel();
-			WritableRaster raster = bufferedImage.getRaster();
-			int[] pixelArray = new int[1];
-			for (int y = 0; y < data.height; y++) {
-				for (int x = 0; x < data.width; x++) {
-					raster.getPixel(x, y, pixelArray);
-					data.setPixel(x, y, pixelArray[0]);
-				}
-			}
-			return data;
-		}
-		return null;
-	}
-
 }

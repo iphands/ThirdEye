@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.ahands.thirdeye.input.Cam;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -21,6 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 
 public class LiveSettings implements Runnable {
+	Canvas canvas;
+	final Cam cam = new Cam("/dev/video0");
 
 	public LiveSettings() {
 
@@ -38,6 +42,7 @@ public class LiveSettings implements Runnable {
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
+				canvas.redraw();
 			}
 		}
 		display.dispose();
@@ -66,22 +71,38 @@ public class LiveSettings implements Runnable {
 			}
 		});
 
-		Image image = null;
-		try {
-			image = new Cam("/dev/video0").getSwtImg();
-		} catch (V4L4JException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final int w = 400;
+		final int h = 300;
 
 		final Group imgsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
 		imgsGroup.setText("Images");
-		imgsGroup.setLayout(new GridLayout());
+		imgsGroup.setLayout(new FillLayout(SWT.HORIZONTAL));
 		imgsGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		imgsGroup.setBackgroundImage(image);
+
+		final Group camImgGroup = new Group(imgsGroup, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
+		camImgGroup.setText("Cam");
+		camImgGroup.setLayout(new FillLayout(SWT.CENTER));
+		camImgGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		camImgGroup.setSize(w, h);
+
+		canvas = new Canvas(camImgGroup, SWT.NO_REDRAW_RESIZE);
+		canvas.setSize(w, h);
+		canvas.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				try {
+					Image image = cam.getSwtImg();
+					image = new Image(Display.getCurrent(), image.getImageData().scaledTo(w, h));
+					e.gc.drawImage(image, 0, 0);
+					image.dispose();
+				} catch (V4L4JException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 
 		final Group settingsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
 		settingsGroup.setText("Settings");
