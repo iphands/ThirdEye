@@ -1,15 +1,9 @@
 package org.ahands.thirdeye.gui;
 
-import java.io.IOException;
-
-import org.ahands.thirdeye.input.Cam;
+import org.ahands.thirdeye.gui.settings.SettingsTabs;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -17,14 +11,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 
-import au.edu.jcu.v4l4j.exceptions.V4L4JException;
-
-public class LiveSettings implements Runnable {
+public class MainGUI implements Runnable {
 	Canvas canvas;
-	final Cam cam = new Cam("/dev/video0");
+
+	// final Cam cam = new Cam("/dev/video0");
 
 	public LiveSettings() {
 
@@ -42,7 +34,6 @@ public class LiveSettings implements Runnable {
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
-				canvas.redraw();
 			}
 		}
 		display.dispose();
@@ -87,44 +78,11 @@ public class LiveSettings implements Runnable {
 
 		canvas = new Canvas(camImgGroup, SWT.NO_REDRAW_RESIZE);
 		canvas.setSize(w, h);
-		canvas.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				try {
-					Image image = cam.getSwtImg();
-					image = new Image(Display.getCurrent(), image.getImageData().scaledTo(w, h));
-					e.gc.drawImage(image, 0, 0);
-					image.dispose();
-				} catch (V4L4JException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
 
 		final Group settingsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
 		settingsGroup.setText("Settings");
 		settingsGroup.setLayout(new FillLayout(SWT.VERTICAL));
-		doSettings(settingsGroup);
+		new SettingsTabs(settingsGroup);
 	}
 
-	private void doSettings(Group settingsGroup) {
-		final Scale deadzoneScale = new Scale(settingsGroup, SWT.BORDER);
-		deadzoneScale.setSize(200, 64);
-		deadzoneScale.setMaximum(50);
-		deadzoneScale.setPageIncrement(1);
-
-		final Scale xAccelScale = new Scale(settingsGroup, SWT.BORDER);
-		xAccelScale.setSize(200, 64);
-		xAccelScale.setMaximum(50);
-		xAccelScale.setPageIncrement(1);
-
-		final Scale yAccelScale = new Scale(settingsGroup, SWT.BORDER);
-		yAccelScale.setSize(200, 64);
-		yAccelScale.setMaximum(50);
-		yAccelScale.setPageIncrement(1);
-
-	}
 }
