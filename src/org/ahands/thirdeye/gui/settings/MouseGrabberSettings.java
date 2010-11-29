@@ -16,26 +16,35 @@ public class MouseGrabberSettings {
 	}
 
 	private void initGUI(Composite comp) {
-		Setting dz = new Setting(comp, "Dead zone:");
-		dz.addListener();
+		Setting deadZone = new Setting(comp, "Dead zone");
+		deadZone.setScale(25);
 
-		Setting xa = new Setting(comp, "Acceleration x-axis:");
+		Setting xAxis = new Setting(comp, "Acceleration x-axis");
+		xAxis.setScale(5);
 
-		Setting ya = new Setting(comp, "Acceleration y-axis:");
+		Setting yAxis = new Setting(comp, "Acceleration y-axis");
+		yAxis.setScale(10);
 	}
 
 	private class Setting {
 		final Scale settingScale;
+		final Text settingValue;
 
 		public Setting(Composite comp, String title) {
 			final Composite settingComp = new Composite(comp, SWT.BORDER);
 			settingComp.setLayout(new FillLayout(SWT.VERTICAL));
 
+			final RowLayout infoLayout = new RowLayout();
+			infoLayout.center = true;
+
 			final Composite infoComp = new Composite(settingComp, SWT.NONE);
-			infoComp.setLayout(new RowLayout());
-			final Label settingLabel = new Label(infoComp, SWT.NULL);
+			infoComp.setLayout(infoLayout);
+
+			final Label settingLabel = new Label(infoComp, SWT.CENTER);
 			settingLabel.setText(title);
-			final Text settingValue = new Text(infoComp, SWT.BORDER | SWT.SINGLE);
+
+			settingValue = new Text(infoComp, SWT.BORDER | SWT.SINGLE);
+			settingValue.setText("000");
 
 			settingScale = new Scale(settingComp, SWT.BORDER);
 			settingScale.setSize(200, 64);
@@ -46,6 +55,11 @@ public class MouseGrabberSettings {
 					settingValue.setText("" + settingScale.getSelection());
 				}
 			});
+		}
+
+		public void setScale(int val) {
+			settingScale.setSelection(val);
+			settingValue.setText("" + val);
 		}
 
 		public void addListener() {

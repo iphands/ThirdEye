@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -14,18 +15,27 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 public class MainGUI implements Runnable {
-	Canvas canvas;
+	public static MainGUI instance = null;
+	private Shell shell;
+	private Canvas canvas;
+	private CamImg camImg;
+	private DetectionImg detectionImg;
+	private Group imgsGroup;
 
-	// final Cam cam = new Cam("/dev/video0");
+	protected MainGUI() {
+	}
 
-	public LiveSettings() {
-
+	public static MainGUI getInstance() {
+		if (instance == null) {
+			instance = new MainGUI();
+		}
+		return instance;
 	}
 
 	@Override
 	public void run() {
 		Display display = new Display();
-		Shell shell = new Shell(display);
+		shell = new Shell(display);
 		shell.setText("ThirdEye");
 
 		initGUI(shell);
@@ -37,6 +47,14 @@ public class MainGUI implements Runnable {
 			}
 		}
 		display.dispose();
+	}
+
+	public void toggleCamImg(boolean bool) {
+		camImg.setVisible(bool);
+	}
+
+	public void toggleDetectionImg(boolean bool) {
+
 	}
 
 	private void initGUI(final Shell shell) {
@@ -62,22 +80,13 @@ public class MainGUI implements Runnable {
 			}
 		});
 
-		final int w = 400;
-		final int h = 300;
-
-		final Group imgsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
+		imgsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
 		imgsGroup.setText("Images");
 		imgsGroup.setLayout(new FillLayout(SWT.HORIZONTAL));
 		imgsGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
-		final Group camImgGroup = new Group(imgsGroup, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
-		camImgGroup.setText("Cam");
-		camImgGroup.setLayout(new FillLayout(SWT.CENTER));
-		camImgGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		camImgGroup.setSize(w, h);
-
-		canvas = new Canvas(camImgGroup, SWT.NO_REDRAW_RESIZE);
-		canvas.setSize(w, h);
+		camImg = new CamImg(imgsGroup);
+		detectionImg = new DetectionImg(imgsGroup);
 
 		final Group settingsGroup = new Group(shell, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
 		settingsGroup.setText("Settings");
@@ -85,4 +94,33 @@ public class MainGUI implements Runnable {
 		new SettingsTabs(settingsGroup);
 	}
 
+	private class DetectionImg {
+		final Group detectionImgGroup;
+
+		public DetectionImg(Composite comp) {
+			detectionImgGroup = new Group(imgsGroup, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
+			detectionImgGroup.setText("Detected Pixels");
+			detectionImgGroup.setLayout(new FillLayout(SWT.CENTER));
+			detectionImgGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		}
+
+		public void dispose() {
+			detectionImgGroup.dispose();
+		}
+	}
+
+	private class CamImg {
+		final Group camImgGroup;
+
+		public CamImg(Composite comp) {
+			camImgGroup = new Group(comp, SWT.SHADOW_ETCHED_IN | SWT.CENTER);
+			camImgGroup.setText("Camera Image");
+			camImgGroup.setLayout(new FillLayout(SWT.CENTER));
+			camImgGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		}
+
+		public void setVisible(boolean visible) {
+			camImgGroup.setVisible(visible);
+		}
+	}
 }

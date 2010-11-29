@@ -19,10 +19,11 @@ public class ControllerSettings {
 
 		radioButtons[0] = new Button(comp, SWT.RADIO);
 		radioButtons[0].setText("Mouse Grabber");
+		radioButtons[0].setSelection(true);
 		radioButtons[0].addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event arg0) {
-				
+
 			}
 		});
 

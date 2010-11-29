@@ -19,6 +19,13 @@ public class SettingsTabs {
 
 		final TabFolder tabFolder = new TabFolder(comp, SWT.BORDER);
 
+		final TabItem imageTab = new TabItem(tabFolder, SWT.NONE);
+		imageTab.setText("Image");
+		final Composite imageComp = new Composite(tabFolder, SWT.BORDER);
+		imageComp.setLayout(new FillLayout(SWT.VERTICAL));
+		new ImageSettings(imageComp);
+		imageTab.setControl(imageComp);
+
 		final TabItem controllersTab = new TabItem(tabFolder, SWT.NONE);
 		controllersTab.setText("Controllers");
 		final Composite controllersComp = new Composite(tabFolder, SWT.BORDER);

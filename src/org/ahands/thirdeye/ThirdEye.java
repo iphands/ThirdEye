@@ -1,10 +1,10 @@
 package org.ahands.thirdeye;
 
-import org.ahands.thirdeye.gui.LiveSettings;
+import org.ahands.thirdeye.gui.MainGUI;
 
 public class ThirdEye {
 	public static void main(String[] args) {
-		new Thread(new LiveSettings()).start();
+		new Thread(MainGUI.getInstance()).start();
 		// new Thread(new MainLoop()).start();
 	}
 }
